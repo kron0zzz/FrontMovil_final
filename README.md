@@ -20,6 +20,6 @@ Este proyecto corresponde al frontend móvil de Makand. Su propósito es permiti
 - en desarrollo
 
 # Autores
-- Mariana [Perfil de gitHub]()
+- Mariana [Perfil de gitHub](https://github.com/Marianaf2409)
 - Sara  [Perfil de gitHub](https://github.com/Sara-Ortiz)
-- Juan Diego  [Perfil de gitHub](https://github.com/Marianaf2409)
+- Juan Diego  [Perfil de gitHub](https://github.com/kron0zzz)

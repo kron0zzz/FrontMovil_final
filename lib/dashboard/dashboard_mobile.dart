@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../widgets/custom_navbar.dart';
 
 class DashboardMobile extends StatelessWidget {
   const DashboardMobile({super.key});
@@ -79,6 +80,7 @@ class DashboardMobile extends StatelessWidget {
           ],
         ),
       ),
+      
     );
   }
 

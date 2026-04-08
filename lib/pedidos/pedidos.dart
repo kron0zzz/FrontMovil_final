@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+// Importamos saliendo de la carpeta 'pedidos' para entrar a 'widgets'
+import '../widgets/custom_navbar.dart'; 
 
 class PedidosPage extends StatefulWidget {
   const PedidosPage({super.key});
@@ -21,7 +23,6 @@ class _PedidosPageState extends State<PedidosPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: const Color(0xFFF5F5F5),
-
       body: Column(
         children: [
           // 🔥 HEADER NARANJA
@@ -54,7 +55,7 @@ class _PedidosPageState extends State<PedidosPage> {
             ),
           ),
 
-          // 🔥 CONTENIDO
+          // 🔥 CONTENIDO PRINCIPAL
           Expanded(
             child: Padding(
               padding: const EdgeInsets.all(16),
@@ -77,7 +78,7 @@ class _PedidosPageState extends State<PedidosPage> {
 
                   const SizedBox(height: 12),
 
-                  // 🔥 FILTROS
+                  // 🔥 FILTROS (ChoiceChips)
                   SingleChildScrollView(
                     scrollDirection: Axis.horizontal,
                     child: Row(
@@ -94,11 +95,9 @@ class _PedidosPageState extends State<PedidosPage> {
                                 selectedFilter = filter;
                               });
                             },
-                            selectedColor: Color.fromARGB(255, 255, 115, 0),
+                            selectedColor: const Color.fromARGB(255, 255, 115, 0),
                             labelStyle: TextStyle(
-                              color: isSelected
-                                  ? Colors.white
-                                  : Colors.black,
+                              color: isSelected ? Colors.white : Colors.black,
                             ),
                           ),
                         );
@@ -108,7 +107,7 @@ class _PedidosPageState extends State<PedidosPage> {
 
                   const SizedBox(height: 16),
 
-                  // 🔥 LISTA DE PEDIDOS
+                  // 🔥 LISTA DE TARJETAS DE PEDIDO
                   Expanded(
                     child: ListView(
                       children: const [
@@ -149,11 +148,19 @@ class _PedidosPageState extends State<PedidosPage> {
           ),
         ],
       ),
+
+      // 🚀 BARRA DE NAVEGACIÓN
+      bottomNavigationBar: CustomNavbar(
+        currentIndex: 1, // Indica que estamos en la pestaña 1 (Pedidos)
+        onTap: (index) {
+          // La lógica de redirección ya está configurada en el switch de tu CustomNavbar
+        },
+      ),
     );
   }
 }
 
-// 🔥 CARD DE PEDIDO
+// 🔥 WIDGET DE LA TARJETA (Se mantiene en el mismo archivo para evitar errores de import)
 class PedidoCard extends StatelessWidget {
   final String id;
   final String cliente;
@@ -200,20 +207,15 @@ class PedidoCard extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // ID + ESTADO
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Text(
                 id,
-                style: const TextStyle(
-                  fontSize: 12,
-                  color: Colors.black54,
-                ),
+                style: const TextStyle(fontSize: 12, color: Colors.black54),
               ),
               Container(
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
                 decoration: BoxDecoration(
                   color: getEstadoColor().withOpacity(0.15),
                   borderRadius: BorderRadius.circular(12),
@@ -223,45 +225,31 @@ class PedidoCard extends StatelessWidget {
                   style: TextStyle(
                     color: getEstadoColor(),
                     fontSize: 12,
+                    fontWeight: FontWeight.bold,
                   ),
                 ),
               ),
             ],
           ),
-
           const SizedBox(height: 6),
-
           Text(
             cliente,
-            style: const TextStyle(
-              fontWeight: FontWeight.bold,
-            ),
+            style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
           ),
-
           const SizedBox(height: 4),
-
           Row(
             children: [
               const Icon(Icons.build, size: 14, color: Colors.black54),
               const SizedBox(width: 4),
-              Text(
-                equipo,
-                style: const TextStyle(fontSize: 12),
-              ),
+              Text(equipo, style: const TextStyle(fontSize: 12)),
             ],
           ),
-
-          const SizedBox(height: 6),
-
+          const SizedBox(height: 4),
           Row(
             children: [
-              const Icon(Icons.access_time,
-                  size: 14, color: Colors.black54),
+              const Icon(Icons.access_time, size: 14, color: Colors.black54),
               const SizedBox(width: 4),
-              Text(
-                fecha,
-                style: const TextStyle(fontSize: 12),
-              ),
+              Text(fecha, style: const TextStyle(fontSize: 12)),
             ],
           ),
         ],

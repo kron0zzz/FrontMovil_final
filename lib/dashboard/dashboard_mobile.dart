@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import '../shared/navbar.dart';
 
 class DashboardMobile extends StatelessWidget {
   const DashboardMobile({super.key});
@@ -79,13 +78,6 @@ class DashboardMobile extends StatelessWidget {
             _buildProgress("Pedidos Completados", 0.80),
           ],
         ),
-      ),
-
-      bottomNavigationBar: BottomNavbar(
-        currentIndex: 0,
-        onTap: (index) {
-          print("Tap en índice: $index");
-        },
       ),
     );
   }

@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'dashboard/dashboard_mobile.dart'; // si lo separas en otro archivo
+import 'login/login.dart'; 
 
 void main() {
   runApp(const MyApp());
@@ -12,7 +12,7 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return const MaterialApp(
       debugShowCheckedModeBanner: false,
-      home: DashboardMobile(),
+      home: LoginPage(),
     );
   }
 }

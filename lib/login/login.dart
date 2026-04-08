@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
-import '../dashboard/dashboard_mobile.dart';
+//import '../dashboard/dashboard_mobile.dart';
+import '../pages/Maquinaria_page.dart';
+
+
 
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
@@ -27,7 +30,7 @@ class _LoginPageState extends State<LoginPage> {
       Navigator.pushReplacement(
         context,
         MaterialPageRoute(
-          builder: (context) => const DashboardMobile(),
+          builder: (context) => const MaquinariaPage(),
         ),
       );
     } else {

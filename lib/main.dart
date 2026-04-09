@@ -3,6 +3,7 @@ import 'pages/maquinaria_page.dart';
 import 'pedidos/pedidos.dart'; 
 import 'dashboard/dashboard.dart';
 import 'perfil/perfil.dart';
+import 'login/login.dart';
 
 void main() {
   // Punto de entrada principal de la aplicación Luna Llena
@@ -27,10 +28,11 @@ class MakandApp extends StatelessWidget {
       ),
 
       // Definimos la pantalla de maquinaria como la inicial según tu flujo previo
-      initialRoute: '/maquinaria',
+      initialRoute: '/login',
       
       // Mapa de rutas de la aplicación
       routes: {
+        '/login': (context) => const LoginPage(),
         '/inicio': (context) => const DashboardMobile(),
         '/maquinaria': (context) => const MaquinariaPage(),
         '/pedidos': (context) => const PedidosPage(),

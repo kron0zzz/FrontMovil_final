@@ -12,28 +12,22 @@ class PerfilPage extends StatefulWidget {
 class _PerfilPageState extends State<PerfilPage> {
   // Datos del usuario (simulados para edición)
   String _userName = "Juan Pérez";
-  String _userRole = "Administrador de Equipos";
-  String _userEmail = "juan.perez@empresa.com";
+  String _userRole = "Administrador";
+  String _userEmail = "juan.perez@gmail.com";
   String _userPhone = "+57 300 123 4567";
-
-  // Estado local temporal para que el switch funcione visualmente
-  // Nota: Para que afecte a toda la app, esto debe moverse al main.dart con Provider
-  bool _isDarkModeLocal = false;
 
   @override
   Widget build(BuildContext context) {
-    // Usamos el estado local para definir los colores en esta pantalla
-    final bool isDarkMode = _isDarkModeLocal;
+    // Definición de colores fijos (Modo Claro de Luna Llena)
+    const Color backgroundColor = Color(0xFFF8FAFC);
+    const Color cardColor = Colors.white;
+    const Color textColor = Color(0xFF1E293B);
+    const Color subTextColor = Color(0xFF64748B);
 
-    final Color backgroundColor = isDarkMode ? const Color(0xFF0F172A) : const Color(0xFFF8FAFC);
-    final Color cardColor = isDarkMode ? const Color(0xFF1E293B) : Colors.white;
-    final Color textColor = isDarkMode ? Colors.white : const Color(0xFF1E293B);
-    final Color subTextColor = isDarkMode ? Colors.white70 : const Color(0xFF64748B);
-
-    // Sombra adaptativa
+    // Sombra suave para las tarjetas
     final List<BoxShadow> cardShadow = [
       BoxShadow(
-        color: isDarkMode ? Colors.black26 : Colors.black.withOpacity(0.06),
+        color: Colors.black.withOpacity(0.06),
         blurRadius: 12,
         offset: const Offset(0, 4),
       ),
@@ -62,23 +56,14 @@ class _PerfilPageState extends State<PerfilPage> {
                     style: TextStyle(color: Colors.white, fontSize: 22, fontWeight: FontWeight.bold),
                   ),
                   const SizedBox(height: 25),
-                  Stack(
-                    alignment: Alignment.bottomRight,
-                    children: [
-                      const CircleAvatar(
-                        radius: 50,
-                        backgroundColor: Colors.white,
-                        child: CircleAvatar(
-                          radius: 47,
-                          backgroundImage: NetworkImage('https://i.pravatar.cc/300'),
-                        ),
-                      ),
-                      Container(
-                        padding: const EdgeInsets.all(8),
-                        decoration: const BoxDecoration(color: Colors.white, shape: BoxShape.circle),
-                        child: const Icon(Icons.camera_alt, color: Color(0xFFFF6B00), size: 18),
-                      ),
-                    ],
+                  // Foto de perfil limpia (Sin icono de cámara)
+                  const CircleAvatar(
+                    radius: 50,
+                    backgroundColor: Colors.white,
+                    child: CircleAvatar(
+                      radius: 47,
+                      backgroundImage: NetworkImage('https://i.pravatar.cc/300'),
+                    ),
                   ),
                   const SizedBox(height: 15),
                   Text(
@@ -93,7 +78,7 @@ class _PerfilPageState extends State<PerfilPage> {
               ),
             ),
 
-            // SECCIÓN: MI CUENTA
+            // SECCIÓN ÚNICA: MI CUENTA
             _buildProfileSectionTitle('Mi Cuenta', subTextColor),
             _buildProfileItem(
               icon: Icons.person_outline,
@@ -101,43 +86,22 @@ class _PerfilPageState extends State<PerfilPage> {
               textColor: textColor,
               cardColor: cardColor,
               shadows: cardShadow,
-              onTap: () => _showPersonalInfoModal(context, isDarkMode),
+              onTap: () => _showPersonalInfoModal(context),
             ),
 
-            // SECCIÓN: PREFERENCIAS
-            _buildProfileSectionTitle('Preferencias', subTextColor),
-            _buildProfileItem(
-              icon: Icons.dark_mode_outlined,
-              title: 'Modo Oscuro',
-              textColor: textColor,
-              cardColor: cardColor,
-              shadows: cardShadow,
-              trailing: Switch(
-                value: _isDarkModeLocal,
-                activeColor: const Color(0xFFFF6B00),
-                onChanged: (value) {
-                  setState(() {
-                    _isDarkModeLocal = value;
-                  });
-                  // Aquí es donde en el futuro llamarás a tu función global:
-                  // themeProvider.toggleTheme();
-                },
-              ),
-            ),
-
-            const SizedBox(height: 20),
+            const SizedBox(height: 40),
 
             // BOTÓN CERRAR SESIÓN
             Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 20),
+              padding: const EdgeInsets.symmetric(horizontal: 20),
               child: SizedBox(
                 width: double.infinity,
                 child: ElevatedButton(
                   onPressed: () {
-                    _showLogoutDialog(context, isDarkMode);
+                    _showLogoutDialog(context);
                   },
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: isDarkMode ? Colors.red.withOpacity(0.1) : const Color(0xFFFFEBEB),
+                    backgroundColor: const Color(0xFFFFEBEB),
                     foregroundColor: Colors.red,
                     elevation: 0,
                     padding: const EdgeInsets.symmetric(vertical: 15),
@@ -159,7 +123,7 @@ class _PerfilPageState extends State<PerfilPage> {
         ),
       ),
       bottomNavigationBar: CustomNavbar(
-        currentIndex: 3, // Indice de perfil
+        currentIndex: 3, // Perfil
         onTap: (index) {
            if (index == 0) Navigator.pushReplacementNamed(context, '/inicio');
            if (index == 1) Navigator.pushReplacementNamed(context, '/maquinaria');
@@ -169,7 +133,6 @@ class _PerfilPageState extends State<PerfilPage> {
     );
   }
 
-  // Títulos de sección del perfil
   Widget _buildProfileSectionTitle(String title, Color color) {
     return Container(
       width: double.infinity,
@@ -181,7 +144,6 @@ class _PerfilPageState extends State<PerfilPage> {
     );
   }
 
-  // Items de la lista del perfil
   Widget _buildProfileItem({
     required IconData icon,
     required String title,
@@ -214,8 +176,7 @@ class _PerfilPageState extends State<PerfilPage> {
     );
   }
 
-  // MODAL: INFORMACIÓN PERSONAL (Editable)
-  void _showPersonalInfoModal(BuildContext context, bool isDarkMode) {
+  void _showPersonalInfoModal(BuildContext context) {
     TextEditingController nameController = TextEditingController(text: _userName);
     TextEditingController emailController = TextEditingController(text: _userEmail);
     TextEditingController phoneController = TextEditingController(text: _userPhone);
@@ -226,9 +187,9 @@ class _PerfilPageState extends State<PerfilPage> {
       backgroundColor: Colors.transparent,
       builder: (context) => Container(
         height: MediaQuery.of(context).size.height * 0.75,
-        decoration: BoxDecoration(
-          color: isDarkMode ? const Color(0xFF1E293B) : Colors.white,
-          borderRadius: const BorderRadius.vertical(top: Radius.circular(30)),
+        decoration: const BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.vertical(top: Radius.circular(30)),
         ),
         padding: const EdgeInsets.all(25),
         child: Column(
@@ -242,16 +203,16 @@ class _PerfilPageState extends State<PerfilPage> {
               ),
             ),
             const SizedBox(height: 25),
-            Text(
+            const Text(
               'Información Personal',
-              style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold, color: isDarkMode ? Colors.white : Colors.black),
+              style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold, color: Colors.black),
             ),
             const SizedBox(height: 8),
             const Text('Actualiza tus datos de contacto y perfil', style: TextStyle(color: Colors.grey, fontSize: 14)),
             const SizedBox(height: 30),
-            _buildEditField('Nombre Completo', nameController, Icons.person_outline, isDarkMode),
-            _buildEditField('Correo Electrónico', emailController, Icons.email_outlined, isDarkMode),
-            _buildEditField('Número de Teléfono', phoneController, Icons.phone_android_outlined, isDarkMode),
+            _buildEditField('Nombre Completo', nameController, Icons.person_outline),
+            _buildEditField('Correo Electrónico', emailController, Icons.email_outlined),
+            _buildEditField('Número de Teléfono', phoneController, Icons.phone_android_outlined),
             const Spacer(),
             SizedBox(
               width: double.infinity,
@@ -285,7 +246,7 @@ class _PerfilPageState extends State<PerfilPage> {
     );
   }
 
-  Widget _buildEditField(String label, TextEditingController controller, IconData icon, bool isDarkMode) {
+  Widget _buildEditField(String label, TextEditingController controller, IconData icon) {
     return Padding(
       padding: const EdgeInsets.only(bottom: 20),
       child: Column(
@@ -295,11 +256,10 @@ class _PerfilPageState extends State<PerfilPage> {
           const SizedBox(height: 8),
           TextField(
             controller: controller,
-            style: TextStyle(color: isDarkMode ? Colors.white : Colors.black),
             decoration: InputDecoration(
               prefixIcon: Icon(icon, color: const Color(0xFFFF6B00)),
               filled: true,
-              fillColor: isDarkMode ? Colors.white.withOpacity(0.05) : const Color(0xFFF1F5F9),
+              fillColor: const Color(0xFFF1F5F9),
               border: OutlineInputBorder(borderRadius: BorderRadius.circular(15), borderSide: BorderSide.none),
               contentPadding: const EdgeInsets.symmetric(vertical: 15),
             ),
@@ -309,20 +269,19 @@ class _PerfilPageState extends State<PerfilPage> {
     );
   }
 
-  // DIÁLOGO: CERRAR SESIÓN
-  void _showLogoutDialog(BuildContext context, bool isDarkMode) {
+  void _showLogoutDialog(BuildContext context) {
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        backgroundColor: isDarkMode ? const Color(0xFF1E293B) : Colors.white,
+        backgroundColor: Colors.white,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
-        title: Text('¿Cerrar Sesión?', style: TextStyle(color: isDarkMode ? Colors.white : Colors.black)),
-        content: Text('¿Estás seguro de que deseas salir de tu cuenta?', style: TextStyle(color: isDarkMode ? Colors.white70 : Colors.grey)),
+        title: const Text('¿Cerrar Sesión?', style: TextStyle(color: Colors.black)),
+        content: const Text('¿Estás seguro de que deseas salir de tu cuenta?', style: TextStyle(color: Color.fromARGB(255, 92, 92, 92))),
         actions: [
           TextButton(onPressed: () => Navigator.pop(context), child: const Text('Cancelar', style: TextStyle(color: Colors.grey))),
           TextButton(
             onPressed: () {
-              Navigator.of(context).pushNamedAndRemoveUntil('/maquinaria', (route) => false);
+              Navigator.of(context).pushNamedAndRemoveUntil('/login', (route) => false);
             },
             child: const Text('Sí, salir', style: TextStyle(color: Colors.red, fontWeight: FontWeight.bold)),
           ),

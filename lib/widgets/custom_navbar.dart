@@ -1,7 +1,6 @@
 // ignore_for_file: deprecated_member_use
 
 import 'package:flutter/material.dart';
-import '../pedidos/pedidos.dart';
 
 class CustomNavbar extends StatelessWidget {
   final int currentIndex;
@@ -28,9 +27,10 @@ class CustomNavbar extends StatelessWidget {
           // Lógica de navegación por rutas
           switch (index) {
             case 0: Navigator.pushReplacementNamed(context, '/inicio'); break;
-            case 1: Navigator.pushReplacementNamed(context, '/pedidos'); break;
-            case 2: Navigator.pushReplacementNamed(context, '/maquinaria'); break;
-            case 3: Navigator.pushReplacementNamed(context, '/perfil'); break;
+            case 1: Navigator.pushReplacementNamed(context, '/proyectos'); break;
+            case 2: Navigator.pushReplacementNamed(context, '/pedidos'); break;
+            case 3: Navigator.pushReplacementNamed(context, '/maquinaria'); break;
+            case 4: Navigator.pushReplacementNamed(context, '/perfil'); break;
           }
         },
         type: BottomNavigationBarType.fixed,
@@ -41,18 +41,9 @@ class CustomNavbar extends StatelessWidget {
         showUnselectedLabels: false,
         items: [
           const BottomNavigationBarItem(icon: Icon(Icons.home_outlined, size: 28), label: 'Inicio'),
+          const BottomNavigationBarItem(icon: Icon(Icons.bookmark_added_sharp, size: 28), label: 'Proyectos'),
           const BottomNavigationBarItem(icon: Icon(Icons.inventory_2_outlined, size: 26), label: 'Pedidos'),
-          BottomNavigationBarItem(
-            icon: Container(
-              padding: const EdgeInsets.all(10),
-              decoration: BoxDecoration(
-                color: const Color(0xFFFFF0E6), 
-                borderRadius: BorderRadius.circular(15)
-              ),
-              child: const Icon(Icons.local_shipping, color: Color(0xFFFF6B00), size: 28),
-            ),
-            label: 'Maquinaria',
-          ),
+          const BottomNavigationBarItem(icon: Icon(Icons.local_shipping, size: 28), label: 'Maquinaria'),
           const BottomNavigationBarItem(icon: Icon(Icons.person_outline, size: 28), label: 'Perfil'),
         ],
       ),

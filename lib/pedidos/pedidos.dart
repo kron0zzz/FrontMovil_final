@@ -159,7 +159,7 @@ class _PedidosPageState extends State<PedidosPage> {
       ),
 
       bottomNavigationBar: CustomNavbar(
-        currentIndex: 1,
+        currentIndex: 2,
         onTap: (index) {},
       ),
     );

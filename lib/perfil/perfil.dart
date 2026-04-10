@@ -123,7 +123,7 @@ class _PerfilPageState extends State<PerfilPage> {
         ),
       ),
       bottomNavigationBar: CustomNavbar(
-        currentIndex: 3, // Perfil
+        currentIndex: 4, // Perfil
         onTap: (index) {
            if (index == 0) Navigator.pushReplacementNamed(context, '/inicio');
            if (index == 1) Navigator.pushReplacementNamed(context, '/maquinaria');

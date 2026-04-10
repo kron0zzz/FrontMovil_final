@@ -9,7 +9,7 @@ class MaquinariaPage extends StatefulWidget {
 }
 
 class _MaquinariaPageState extends State<MaquinariaPage> {
-  final int _selectedIndex = 2; // Índice fijo para esta página
+  final int _selectedIndex = 3; // Índice fijo para esta página
 
   final List<Map<String, dynamic>> _todosLosEquipos = [
     {"id": "EQ-001", "nombre": "Excavadora Hidráulica", "modelo": "CAT 320D", "estado": "Disponible", "color": Colors.green},

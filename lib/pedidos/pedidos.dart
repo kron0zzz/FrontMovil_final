@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
-// Importamos saliendo de la carpeta 'pedidos' para entrar a 'widgets'
-import '../widgets/custom_navbar.dart'; 
+import '../widgets/custom_navbar.dart';
 
 class PedidosPage extends StatefulWidget {
   const PedidosPage({super.key});
@@ -23,9 +22,9 @@ class _PedidosPageState extends State<PedidosPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: const Color(0xFFF5F5F5),
+
       body: Column(
         children: [
-          // 🔥 HEADER NARANJA
           Container(
             width: double.infinity,
             padding: const EdgeInsets.fromLTRB(20, 50, 20, 20),
@@ -55,20 +54,17 @@ class _PedidosPageState extends State<PedidosPage> {
             ),
           ),
 
-          // 🔥 CONTENIDO PRINCIPAL
           Expanded(
             child: Padding(
               padding: const EdgeInsets.all(16),
               child: Column(
                 children: [
-                  // 🔍 BUSCADOR
                   TextField(
                     decoration: InputDecoration(
                       hintText: "Buscar por cliente o ID...",
                       prefixIcon: const Icon(Icons.search),
                       filled: true,
                       fillColor: Colors.white,
-                      contentPadding: const EdgeInsets.symmetric(vertical: 0),
                       border: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(12),
                         borderSide: BorderSide.none,
@@ -78,7 +74,6 @@ class _PedidosPageState extends State<PedidosPage> {
 
                   const SizedBox(height: 12),
 
-                  // 🔥 FILTROS (ChoiceChips)
                   SingleChildScrollView(
                     scrollDirection: Axis.horizontal,
                     child: Row(
@@ -95,9 +90,11 @@ class _PedidosPageState extends State<PedidosPage> {
                                 selectedFilter = filter;
                               });
                             },
-                            selectedColor: const Color.fromARGB(255, 255, 115, 0),
+                            selectedColor:
+                                const Color.fromARGB(255, 255, 115, 0),
                             labelStyle: TextStyle(
-                              color: isSelected ? Colors.white : Colors.black,
+                              color:
+                                  isSelected ? Colors.white : Colors.black,
                             ),
                           ),
                         );
@@ -107,32 +104,44 @@ class _PedidosPageState extends State<PedidosPage> {
 
                   const SizedBox(height: 16),
 
-                  // 🔥 LISTA DE TARJETAS DE PEDIDO
                   Expanded(
                     child: ListView(
-                      children: const [
+                      children: [
                         PedidoCard(
                           id: "PED-2024-0156",
                           cliente: "Constructora López",
                           equipo: "Excavadora Hidráulica",
                           fecha: "Hoy, 10:30 AM",
                           estado: "En Progreso",
+                          onTap: () {
+                            showModalBottomSheet(
+                              context: context,
+                              isScrollControlled: true,
+                              shape: const RoundedRectangleBorder(
+                                borderRadius: BorderRadius.vertical(
+                                  top: Radius.circular(20),
+                                ),
+                              ),
+                              builder: (context) =>
+                                  const PedidoDetalleModal(),
+                            );
+                          },
                         ),
-                        PedidoCard(
+                        const PedidoCard(
                           id: "PED-2024-0155",
                           cliente: "Inmobiliaria Norte",
                           equipo: "Retroexcavadora",
                           fecha: "Hoy, 09:15 AM",
                           estado: "Completado",
                         ),
-                        PedidoCard(
+                        const PedidoCard(
                           id: "PED-2024-0154",
                           cliente: "Obras Civiles S.A.",
                           equipo: "Montacargas 3T",
                           fecha: "Ayer, 4:45 PM",
                           estado: "En Progreso",
                         ),
-                        PedidoCard(
+                        const PedidoCard(
                           id: "PED-2024-0153",
                           cliente: "Constructora del Valle",
                           equipo: "Grúa Torre",
@@ -149,24 +158,22 @@ class _PedidosPageState extends State<PedidosPage> {
         ],
       ),
 
-      // 🚀 BARRA DE NAVEGACIÓN
       bottomNavigationBar: CustomNavbar(
-        currentIndex: 1, // Indica que estamos en la pestaña 1 (Pedidos)
-        onTap: (index) {
-          // La lógica de redirección ya está configurada en el switch de tu CustomNavbar
-        },
+        currentIndex: 1,
+        onTap: (index) {},
       ),
     );
   }
 }
 
-// 🔥 WIDGET DE LA TARJETA (Se mantiene en el mismo archivo para evitar errores de import)
+// 🔥 CARD
 class PedidoCard extends StatelessWidget {
   final String id;
   final String cliente;
   final String equipo;
   final String fecha;
   final String estado;
+  final VoidCallback? onTap;
 
   const PedidoCard({
     super.key,
@@ -175,6 +182,7 @@ class PedidoCard extends StatelessWidget {
     required this.equipo,
     required this.fecha,
     required this.estado,
+    this.onTap,
   });
 
   Color getEstadoColor() {
@@ -190,68 +198,235 @@ class PedidoCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      margin: const EdgeInsets.only(bottom: 12),
-      padding: const EdgeInsets.all(14),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(16),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withOpacity(0.05),
-            blurRadius: 8,
-            offset: const Offset(0, 4),
-          )
+    return GestureDetector(
+      onTap: onTap,
+      child: Container(
+        margin: const EdgeInsets.only(bottom: 12),
+        padding: const EdgeInsets.all(14),
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(16),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withOpacity(0.05),
+              blurRadius: 8,
+              offset: const Offset(0, 4),
+            )
+          ],
+        ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Text(id,
+                    style:
+                        const TextStyle(fontSize: 12, color: Colors.black54)),
+                Container(
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                  decoration: BoxDecoration(
+                    color: getEstadoColor().withOpacity(0.15),
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  child: Text(
+                    estado,
+                    style: TextStyle(
+                      color: getEstadoColor(),
+                      fontSize: 12,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(height: 6),
+            Text(cliente,
+                style:
+                    const TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
+            const SizedBox(height: 4),
+            Row(
+              children: [
+                const Icon(Icons.build, size: 14, color: Colors.black54),
+                const SizedBox(width: 4),
+                Text(equipo, style: const TextStyle(fontSize: 12)),
+              ],
+            ),
+            const SizedBox(height: 4),
+            Row(
+              children: [
+                const Icon(Icons.access_time,
+                    size: 14, color: Colors.black54),
+                const SizedBox(width: 4),
+                Text(fecha, style: const TextStyle(fontSize: 12)),
+              ],
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+// 🔥 MODAL
+class PedidoDetalleModal extends StatefulWidget {
+  const PedidoDetalleModal({super.key});
+
+  @override
+  State<PedidoDetalleModal> createState() => _PedidoDetalleModalState();
+}
+
+class _PedidoDetalleModalState extends State<PedidoDetalleModal> {
+  String estadoSeleccionado = "En proceso";
+
+  final List<String> estados = ["En proceso", "Cerrado", "Cancelado"];
+
+  final List<Map<String, dynamic>> maquinaria = [
+    {
+      "nombre": "Excavadora Hidráulica",
+      "cantidad": 2,
+      "precio": 500000,
+      "peso": "20T"
+    },
+    {
+      "nombre": "Retroexcavadora",
+      "cantidad": 1,
+      "precio": 300000,
+      "peso": "15T"
+    },
+  ];
+
+  void confirmarCambioEstado(String nuevoEstado) {
+    if (nuevoEstado == estadoSeleccionado) return;
+
+    showDialog(
+      context: context,
+      builder: (_) => AlertDialog(
+        title: const Text("Confirmación"),
+        content: const Text(
+            "¿Estás seguro que quieres cambiar el estado del pedido?"),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: const Text("Cancelar"),
+          ),
+          ElevatedButton(
+            style: ElevatedButton.styleFrom(
+              backgroundColor: const Color.fromARGB(255, 255, 115, 0),
+            ),
+            onPressed: () {
+              setState(() {
+                estadoSeleccionado = nuevoEstado;
+              });
+              Navigator.pop(context);
+            },
+            child: const Text("Cambiar"),
+          ),
         ],
+      ),
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return DraggableScrollableSheet(
+      expand: false,
+      initialChildSize: 0.85,
+      builder: (_, controller) {
+        return Container(
+          padding: const EdgeInsets.all(20),
+          decoration: const BoxDecoration(
+            color: Colors.white,
+            borderRadius:
+                BorderRadius.vertical(top: Radius.circular(20)),
+          ),
+          child: ListView(
+            controller: controller,
+            children: [
+              // 🔥 HEADER CON X
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  const Text(
+                    "Detalle del Pedido",
+                    style:
+                        TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                  ),
+                  IconButton(
+                    icon: const Icon(Icons.close),
+                    onPressed: () => Navigator.pop(context),
+                  ),
+                ],
+              ),
+
+              const SizedBox(height: 20),
+
+              _info("ID Pedido", "PED-2024-0156"),
+              _info("Fecha", "Hoy, 10:30 AM"),
+              _info("Proyecto", "Proyecto Torre Norte"),
+
+              const SizedBox(height: 10),
+              const Text("Estado del pedido"),
+
+              DropdownButtonFormField(
+                value: estadoSeleccionado,
+                items: estados
+                    .map((e) =>
+                        DropdownMenuItem(value: e, child: Text(e)))
+                    .toList(),
+                onChanged: (value) {
+                  confirmarCambioEstado(value!);
+                },
+              ),
+
+              _info("Usuario", "Juan Pérez"),
+              _info("Descuento", "\$50,000"),
+
+              const SizedBox(height: 20),
+
+              const Text("Maquinaria",
+                  style: TextStyle(fontWeight: FontWeight.bold)),
+
+              const SizedBox(height: 10),
+
+              ...maquinaria.map((m) => _maquinaItem(m)).toList(),
+            ],
+          ),
+        );
+      },
+    );
+  }
+
+  Widget _info(String label, String value) {
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 8),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          Text(label, style: const TextStyle(color: Colors.black54)),
+          Text(value, style: const TextStyle(fontWeight: FontWeight.bold)),
+        ],
+      ),
+    );
+  }
+
+  Widget _maquinaItem(Map<String, dynamic> m) {
+    return Container(
+      margin: const EdgeInsets.only(bottom: 10),
+      padding: const EdgeInsets.all(12),
+      decoration: BoxDecoration(
+        color: Colors.grey.shade100,
+        borderRadius: BorderRadius.circular(10),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Text(
-                id,
-                style: const TextStyle(fontSize: 12, color: Colors.black54),
-              ),
-              Container(
-                padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
-                decoration: BoxDecoration(
-                  color: getEstadoColor().withOpacity(0.15),
-                  borderRadius: BorderRadius.circular(12),
-                ),
-                child: Text(
-                  estado,
-                  style: TextStyle(
-                    color: getEstadoColor(),
-                    fontSize: 12,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-              ),
-            ],
-          ),
-          const SizedBox(height: 6),
-          Text(
-            cliente,
-            style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
-          ),
-          const SizedBox(height: 4),
-          Row(
-            children: [
-              const Icon(Icons.build, size: 14, color: Colors.black54),
-              const SizedBox(width: 4),
-              Text(equipo, style: const TextStyle(fontSize: 12)),
-            ],
-          ),
-          const SizedBox(height: 4),
-          Row(
-            children: [
-              const Icon(Icons.access_time, size: 14, color: Colors.black54),
-              const SizedBox(width: 4),
-              Text(fecha, style: const TextStyle(fontSize: 12)),
-            ],
-          ),
+          Text(m["nombre"],
+              style: const TextStyle(fontWeight: FontWeight.bold)),
+          Text("Cantidad: ${m["cantidad"]}"),
+          Text("Precio: \$${m["precio"]}"),
+          Text("Peso: ${m["peso"]}"),
         ],
       ),
     );

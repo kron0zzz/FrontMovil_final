@@ -4,6 +4,7 @@ import 'pedidos/pedidos.dart';
 import 'dashboard/dashboard.dart';
 import 'perfil/perfil.dart';
 import 'login/login.dart';
+import 'proyectos/proyectos.dart';
 
 void main() {
   runApp(const MakandApp());
@@ -31,6 +32,7 @@ class MakandApp extends StatelessWidget {
         '/login': (context) => const LoginPage(),
         '/inicio': (context) => const DashboardMobile(),
         '/maquinaria': (context) => const MaquinariaPage(),
+        '/proyectos' : (context) => const ProyectosPage(),
         '/pedidos': (context) => const PedidosPage(),
         '/perfil': (context) => const PerfilPage(),
       },

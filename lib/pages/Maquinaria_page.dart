@@ -44,16 +44,29 @@ class _MaquinariaPageState extends State<MaquinariaPage> {
           // Header Naranja Limpio
           Container(
             width: double.infinity,
-            padding: const EdgeInsets.only(top: 60, left: 25, right: 25, bottom: 40),
+            padding: const EdgeInsets.fromLTRB(20, 50, 20, 20),
             decoration: const BoxDecoration(
-              color: Color(0xFFFF6B00),
-              borderRadius: BorderRadius.only(bottomLeft: Radius.circular(35), bottomRight: Radius.circular(35)),
+              color: Color.fromARGB(255, 255, 115, 0),
+              borderRadius: BorderRadius.vertical(
+                bottom: Radius.circular(20),
+              ),
             ),
             child: const Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text('Maquinaria', style: TextStyle(color: Colors.white, fontSize: 28, fontWeight: FontWeight.bold)),
-                Text('Catálogo de equipos disponibles', style: TextStyle(color: Colors.white70, fontSize: 15)),
+                Text(
+                  "Maquinaria",
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontSize: 22,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+                SizedBox(height: 5),
+                Text(
+                  "Catálogo de equipos disponibles",
+                  style: TextStyle(color: Colors.white70),
+                ),
               ],
             ),
           ),

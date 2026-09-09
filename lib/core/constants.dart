@@ -30,4 +30,5 @@ class AppTheme {
   }
 }
 
-const apiBaseUrl = 'http://192.168.1.48:3000/api';
+/// URL base de la API - Única fuente de verdad
+const String apiBaseUrl = 'http://localhost:3000/api';

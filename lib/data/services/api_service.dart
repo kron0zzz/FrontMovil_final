@@ -1,11 +1,12 @@
 import 'dart:convert';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:http/http.dart' as http;
+import 'package:flutter_app/core/constants.dart';
 
 class ApiService {
   static const _storage = FlutterSecureStorage();
-static const _baseUrl = 'http://192.168.1.48:3000/api'; 
- Future<String?> getToken() async {
+  
+  Future<String?> getToken() async {
     return await _storage.read(key: 'token');
   }
 
@@ -30,21 +31,26 @@ static const _baseUrl = 'http://192.168.1.48:3000/api';
     return headers;
   }
 
-  Future<dynamic> get(String path, {bool auth = true}) async {
+  /// GET con soporte para paginación (page, limit)
+  Future<dynamic> get(String path, {bool auth = true, int? page, int? limit}) async {
+    var uri = Uri.parse('$apiBaseUrl$path');
+    if (page != null || limit != null) {
+      final queryParams = <String, String>{};
+      if (page != null) queryParams['page'] = page.toString();
+      if (limit != null) queryParams['limit'] = limit.toString();
+      uri = uri.replace(queryParameters: queryParams);
+    }
+    
     final response = await http
-        .get(
-          Uri.parse('$_baseUrl$path'),
-          headers: await _headers(auth: auth),
-        )
+        .get(uri, headers: await _headers(auth: auth))
         .timeout(const Duration(seconds: 15));
     return _handleResponse(response);
   }
 
-  Future<dynamic> post(String path, Map<String, dynamic> body,
-      {bool auth = true}) async {
+  Future<dynamic> post(String path, Map<String, dynamic> body, {bool auth = true}) async {
     final response = await http
         .post(
-          Uri.parse('$_baseUrl$path'),
+          Uri.parse('$apiBaseUrl$path'),
           headers: await _headers(auth: auth),
           body: jsonEncode(body),
         )

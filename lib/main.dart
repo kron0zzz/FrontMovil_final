@@ -6,26 +6,52 @@ import 'package:flutter_app/presentation/screens/main_screen.dart';
 import 'package:flutter_app/presentation/screens/forgot_password_screen.dart';
 import 'package:flutter_app/presentation/screens/verify_code_screen.dart';
 import 'package:flutter_app/presentation/screens/reset_password_screen.dart';
+import 'package:go_router/go_router.dart';
 
 void main() {
   runApp(const MakandApp());
 }
+
+final _router = GoRouter(
+  initialLocation: '/',
+  routes: [
+    GoRoute(
+      path: '/',
+      builder: (context, state) => const LoginWrapper(),
+    ),
+    GoRoute(
+      path: '/forgot-password',
+      builder: (context, state) => const ForgotPasswordScreen(),
+    ),
+    GoRoute(
+      path: '/verify-code',
+      builder: (context, state) => const VerifyCodeScreen(),
+    ),
+    GoRoute(
+      path: '/reset-password',
+      builder: (context, state) => const ResetPasswordScreen(),
+    ),
+    GoRoute(
+      path: '/main',
+      builder: (context, state) {
+        final extra = state.extra as Map<String, dynamic>?;
+        final token = extra?['token'] as String? ?? '';
+        final user = extra?['user'] as Map<String, dynamic>? ?? {};
+        return MainScreen(token: token, user: user, onLogout: () {});
+      },
+    ),
+  ],
+);
 
 class MakandApp extends StatelessWidget {
   const MakandApp({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
+    return MaterialApp.router(
       title: 'Makand',
       theme: AppTheme.light,
-      initialRoute: '/',
-      routes: {
-        '/': (context) => const LoginWrapper(),
-        '/forgot-password': (context) => const ForgotPasswordScreen(),
-        '/verify-code': (context) => const VerifyCodeScreen(),
-        '/reset-password': (context) => const ResetPasswordScreen(),
-      },
+      routerConfig: _router,
     );
   }
 }
@@ -60,14 +86,18 @@ class _LoginWrapperState extends State<LoginWrapper> {
       _token = token;
       _user = user;
     });
+    context.go('/main', extra: {'token': token, 'user': user});
   }
 
   void _handleLogout() async {
     await _api.deleteToken();
-    setState(() {
-      _token = null;
-      _user = null;
-    });
+    if (mounted) {
+      setState(() {
+        _token = null;
+        _user = null;
+      });
+      context.go('/');
+    }
   }
 
   @override

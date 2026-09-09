@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_app/core/constants.dart';
+import 'package:flutter_app/core/utils/api_parser.dart';
+import 'package:flutter_app/core/utils/pagination_controls.dart';
 import 'package:flutter_app/data/models/customer.dart';
 import 'package:flutter_app/data/services/api_service.dart';
 
@@ -17,7 +19,7 @@ class _CustomersScreenState extends State<CustomersScreen> {
   List<Customer> _items = [];
   bool _loading = true;
   String? _error;
-  Customer? _selected;
+  PaginationInfo _pagination = PaginationInfo(page: 1, limit: 10, total: 0, totalPages: 1);
 
   @override
   void initState() {
@@ -25,49 +27,30 @@ class _CustomersScreenState extends State<CustomersScreen> {
     _loadItems();
   }
 
-  Future<void> _loadItems() async {
+  Future<void> _loadItems({int page = 1}) async {
     try {
-      final data = await _api.get('/customers/table', auth: true);
-      dynamic rawList;
-
-      if (data is List) {
-        rawList = data;
-      } else if (data is Map<String, dynamic>) {
-        rawList = data['data'];
-        if (rawList is Map<String, dynamic>) {
-          rawList = rawList['rows'] ??
-              rawList['customers'] ??
-              rawList['result'] ??
-              rawList['items'] ??
-              [];
-        } else if (rawList == null) {
-          rawList = data['customers'] ??
-              data['result'] ??
-              data['rows'] ??
-              data['items'] ??
-              [];
-        }
-      } else {
-        rawList = [];
-      }
-
-      if (rawList is List) {
-        final parsedItems = rawList.map<Customer>((e) {
-          if (e is Customer) return e;
-          final map = e is Map<String, dynamic> ? e : Map<String, dynamic>.from(e as Map);
-          return Customer.fromJson(map);
-        }).toList();
-
+      setState(() => _loading = true);
+      final response = await _api.get('/customers/table', auth: true, page: page, limit: 10);
+      
+      if (isPaginatedResponse(response)) {
+        final paginated = PaginatedResponse.fromJson(
+          response as Map<String, dynamic>,
+          Customer.fromJson,
+        );
         setState(() {
-          _items = parsedItems;
+          _items = paginated.data;
+          _pagination = paginated.pagination;
           _loading = false;
           _error = null;
         });
       } else {
+        // Fallback para respuestas legacy
+        final items = parseLegacyList(response, Customer.fromJson);
         setState(() {
-          _items = [];
+          _items = items;
+          _pagination = _pagination.copyWith(total: items.length, totalPages: 1);
           _loading = false;
-          _error = 'Formato no soportado: ${data.runtimeType}';
+          _error = null;
         });
       }
     } catch (e) {
@@ -90,10 +73,7 @@ class _CustomersScreenState extends State<CustomersScreen> {
             style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
           ),
           const SizedBox(height: 4),
-          Text(
-            '${_items.length} registros encontrados',
-            style: TextStyle(fontSize: 14, color: AppColors.textLight),
-          ),
+          PaginationInfoWidget(pagination: _pagination),
           const SizedBox(height: 16),
           if (_loading)
             ...List.generate(4, (i) => _buildSkeleton())
@@ -104,6 +84,12 @@ class _CustomersScreenState extends State<CustomersScreen> {
                   customer: item,
                   onTap: () => _showDetails(context, item),
                 )),
+          const SizedBox(height: 16),
+          PaginationControls(
+            pagination: _pagination,
+            onPageChanged: (page) => _loadItems(page: page),
+            isLoading: _loading,
+          ),
         ],
       ),
     );
@@ -179,7 +165,7 @@ class _CustomersScreenState extends State<CustomersScreen> {
         borderRadius: BorderRadius.circular(12),
         border: Border.all(color: const Color(0xFFFECACA)),
       ),
-      child: Text(error, style: const TextStyle(color: const Color(0xFFB91C1C))),
+      child: Text(error, style: const TextStyle(color: Color(0xFFB91C1C))),
     );
   }
 }

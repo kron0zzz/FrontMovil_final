@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_app/core/constants.dart';
+import 'package:flutter_app/core/utils/api_parser.dart';
+import 'package:flutter_app/core/utils/pagination_controls.dart';
 import 'package:flutter_app/data/models/machinery.dart';
 import 'package:flutter_app/data/services/api_service.dart';
 
@@ -17,7 +19,7 @@ class _MachineryScreenState extends State<MachineryScreen> {
   List<Machinery> _items = [];
   bool _loading = true;
   String? _error;
-  Machinery? _selected;
+  PaginationInfo _pagination = PaginationInfo(page: 1, limit: 10, total: 0, totalPages: 1);
 
   @override
   void initState() {
@@ -25,52 +27,30 @@ class _MachineryScreenState extends State<MachineryScreen> {
     _loadItems();
   }
 
-  Future<void> _loadItems() async {
+  Future<void> _loadItems({int page = 1}) async {
     try {
-      final response = await _api.get('/machines/table', auth: true);
-      dynamic rawList;
-
-      if (response is List) {
-        rawList = response;
-      } else if (response is Map<String, dynamic>) {
-        rawList = response['data'];
-        if (rawList is Map<String, dynamic>) {
-          rawList = rawList['rows'] ??
-              rawList['machines'] ??
-              rawList['machinery'] ??
-              rawList['result'] ??
-              rawList['items'] ??
-              [];
-        } else if (rawList == null) {
-          rawList = response['machines'] ??
-              response['machinery'] ??
-              response['result'] ??
-              response['rows'] ??
-              response['items'] ??
-              [];
-        }
-      } else {
-        rawList = [];
-      }
-
-      if (rawList is List) {
-        final parsedItems = rawList.map<Machinery>((item) {
-          final map = item is Map<String, dynamic>
-              ? item
-              : Map<String, dynamic>.from(item as Map);
-          return Machinery.fromJson(map);
-        }).toList();
-
+      setState(() => _loading = true);
+      final response = await _api.get('/machines/table', auth: true, page: page, limit: 10);
+      
+      if (isPaginatedResponse(response)) {
+        final paginated = PaginatedResponse.fromJson(
+          response as Map<String, dynamic>,
+          Machinery.fromJson,
+        );
         setState(() {
-          _items = parsedItems;
+          _items = paginated.data;
+          _pagination = paginated.pagination;
           _loading = false;
           _error = null;
         });
       } else {
+        // Fallback para respuestas legacy
+        final items = parseLegacyList(response, Machinery.fromJson);
         setState(() {
-          _items = [];
+          _items = items;
+          _pagination = _pagination.copyWith(total: items.length, totalPages: 1);
           _loading = false;
-          _error = 'Formato no soportado: ${response.runtimeType} - $response';
+          _error = null;
         });
       }
     } catch (e) {
@@ -93,10 +73,7 @@ class _MachineryScreenState extends State<MachineryScreen> {
             style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
           ),
           const SizedBox(height: 4),
-          Text(
-            '${_items.length} registros encontrados',
-            style: const TextStyle(fontSize: 14, color: AppColors.textLight),
-          ),
+          PaginationInfoWidget(pagination: _pagination),
           const SizedBox(height: 16),
           if (_loading)
             ...List.generate(4, (i) => _buildSkeleton())
@@ -107,6 +84,12 @@ class _MachineryScreenState extends State<MachineryScreen> {
                   machinery: item,
                   onTap: () => _showDetails(context, item),
                 )),
+          const SizedBox(height: 16),
+          PaginationControls(
+            pagination: _pagination,
+            onPageChanged: (page) => _loadItems(page: page),
+            isLoading: _loading,
+          ),
         ],
       ),
     );
@@ -291,7 +274,7 @@ class _MachineryCard extends StatelessWidget {
          ],
        ),
      );
-   }
+  }
 }
 
 class _DetailRow extends StatelessWidget {

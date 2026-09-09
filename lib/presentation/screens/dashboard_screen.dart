@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_app/core/constants.dart';
+import 'package:flutter_app/core/utils/api_parser.dart';
 import 'package:flutter_app/data/services/api_service.dart';
 
 class DashboardScreen extends StatefulWidget {
@@ -28,46 +29,51 @@ class _DashboardScreenState extends State<DashboardScreen> {
   Future<void> _loadStats() async {
     try {
       final results = await Future.wait([
-        _api.get('/machines/table', auth: true),
-        _api.get('/projects/table', auth: true),
-        _api.get('/orders/table', auth: true),
-        _api.get('/customers/table', auth: true),
+        _api.get('/machines/table', auth: true, page: 1, limit: 1),
+        _api.get('/projects/table', auth: true, page: 1, limit: 1),
+        _api.get('/orders/table', auth: true, page: 1, limit: 1),
+        _api.get('/customers/table', auth: true, page: 1, limit: 1),
       ]);
 
-      int extractCount(dynamic response) {
-        dynamic rawList;
-        if (response is List) {
-          rawList = response;
-        } else if (response is Map<String, dynamic>) {
-          rawList = response['data'];
-          if (rawList is Map<String, dynamic>) {
-            rawList = rawList['rows'] ??
-                rawList['machines'] ??
-                rawList['projects'] ??
-                rawList['orders'] ??
-                rawList['customers'] ??
-                rawList['result'] ??
-                rawList['items'] ??
-                [];
-          } else if (rawList == null) {
-            rawList = response['machines'] ??
-                response['projects'] ??
-                response['orders'] ??
-                response['customers'] ??
-                response['result'] ??
-                response['rows'] ??
-                response['items'] ??
-                [];
-          }
+      int extractTotal(dynamic response) {
+        if (isPaginatedResponse(response)) {
+          final pagination = PaginationInfo.fromJson(
+            (response as Map<String, dynamic>)['pagination'] as Map<String, dynamic>,
+          );
+          return pagination.total;
         }
-        return rawList is List ? rawList.length : 0;
+        // Fallback legacy
+        if (response is List) return response.length;
+        if (response is Map<String, dynamic>) {
+          dynamic rawList = response['data'];
+          if (rawList is Map<String, dynamic>) {
+            return rawList['rows']?.length ??
+                rawList['items']?.length ??
+                rawList['machines']?.length ??
+                rawList['projects']?.length ??
+                rawList['orders']?.length ??
+                rawList['customers']?.length ??
+                rawList['machinery']?.length ??
+                0;
+          } else if (rawList is List) {
+            return rawList.length;
+          }
+          return response['machines']?.length ??
+              response['projects']?.length ??
+              response['orders']?.length ??
+              response['customers']?.length ??
+              response['rows']?.length ??
+              response['items']?.length ??
+              0;
+        }
+        return 0;
       }
 
       setState(() {
-        _machinery = extractCount(results[0]);
-        _projects = extractCount(results[1]);
-        _orders = extractCount(results[2]);
-        _customers = extractCount(results[3]);
+        _machinery = extractTotal(results[0]);
+        _projects = extractTotal(results[1]);
+        _orders = extractTotal(results[2]);
+        _customers = extractTotal(results[3]);
         _loading = false;
       });
     } catch (e) {

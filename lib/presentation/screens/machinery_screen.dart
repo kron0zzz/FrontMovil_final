@@ -144,26 +144,53 @@ class _MachineryScreenState extends State<MachineryScreen> {
             ),
           ],
         ),
-        content: Column(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            _DetailRow(label: 'Categoría', value: machinery.categoryName, icon: Icons.category),
-            const SizedBox(height: 12),
-            _DetailRow(
-              label: 'Estado',
-              value: machinery.statusName.isEmpty ? 'N/A' : machinery.statusName,
-              icon: Icons.info_outline,
-            ),
-            const SizedBox(height: 12),
-            _DetailRow(label: 'Stock total', value: '${machinery.stockQuantity} uds', icon: Icons.inventory_2),
-            const SizedBox(height: 12),
-            _DetailRow(
-              label: 'Precio por día',
-              value: '\$${machinery.dailyRentalPrice.toStringAsFixed(0)}',
-              icon: Icons.attach_money,
-            ),
-          ],
+        content: SingleChildScrollView(
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              _DetailRow(label: 'ID', value: '#${machinery.machineryId}', icon: Icons.tag),
+              const SizedBox(height: 12),
+              _DetailRow(label: 'Categoría', value: machinery.categoryName, icon: Icons.category),
+              const SizedBox(height: 12),
+              _DetailRow(label: 'Descripción', value: machinery.machineryDescription.isEmpty ? 'N/A' : machinery.machineryDescription, icon: Icons.description),
+              const SizedBox(height: 12),
+              _DetailRow(
+                label: 'Estado',
+                value: machinery.statusName.isEmpty ? 'N/A' : machinery.statusName,
+                icon: Icons.info_outline,
+              ),
+              const SizedBox(height: 12),
+              _DetailRow(
+                label: 'Motorizada',
+                value: machinery.isMotorized ? 'Sí' : 'No',
+                icon: Icons.electric_bolt,
+                valueColor: machinery.isMotorized ? const Color(0xFF059669) : const Color(0xFFDC2626),
+              ),
+              const SizedBox(height: 12),
+              _DetailRow(label: 'Stock total', value: '${machinery.totalStock} uds', icon: Icons.inventory),
+              const SizedBox(height: 12),
+              _DetailRow(label: 'Stock disponible', value: '${machinery.availableStock} uds', icon: Icons.inventory_2),
+              const SizedBox(height: 12),
+              _DetailRow(
+                label: 'Precio venta',
+                value: '\$${machinery.salePrice.toStringAsFixed(0)}',
+                icon: Icons.sell,
+              ),
+              const SizedBox(height: 12),
+              _DetailRow(
+                label: 'Precio alquiler/día',
+                value: '\$${machinery.dailyRentalPrice.toStringAsFixed(0)}',
+                icon: Icons.attach_money,
+              ),
+              const SizedBox(height: 12),
+              _DetailRow(
+                label: 'Peso',
+                value: '${machinery.weightKg.toStringAsFixed(1)} kg',
+                icon: Icons.monitor_weight,
+              ),
+            ],
+          ),
         ),
         actions: [
           TextButton.icon(
@@ -249,7 +276,7 @@ class _MachineryCard extends StatelessWidget {
             children: [
               Expanded(
                 child: Text(
-                  'Stock total: ${machinery.stockQuantity} uds',
+                  'Stock total: ${machinery.totalStock} uds • Disponible: ${machinery.availableStock} uds',
                   style: const TextStyle(fontSize: 13, color: AppColors.textLight),
                 ),
               ),

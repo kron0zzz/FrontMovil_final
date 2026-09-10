@@ -31,7 +31,7 @@ class _CustomersScreenState extends State<CustomersScreen> {
     try {
       setState(() => _loading = true);
       final response = await _api.get('/customers/table', auth: true, page: page, limit: 10);
-      
+
       if (isPaginatedResponse(response)) {
         final paginated = PaginatedResponse.fromJson(
           response as Map<String, dynamic>,
@@ -112,19 +112,39 @@ class _CustomersScreenState extends State<CustomersScreen> {
             ),
           ],
         ),
-        content: Column(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            _DetailRow(label: 'Documento', value: customer.documentNumber, icon: Icons.badge),
-            const SizedBox(height: 12),
-            _DetailRow(
-              label: 'Estado',
-              value: customer.status ? 'Activo' : 'Inactivo',
-              icon: customer.status ? Icons.check_circle : Icons.cancel,
-              valueColor: customer.status ? const Color(0xFF059669) : const Color(0xFFDC2626),
-            ),
-          ],
+        content: SingleChildScrollView(
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              _DetailRow(label: 'ID', value: '#${customer.customerId}', icon: Icons.tag),
+              const SizedBox(height: 12),
+              _DetailRow(label: 'Tipo de organización', value: customer.organizationType, icon: Icons.apartment),
+              const SizedBox(height: 12),
+              _DetailRow(label: 'Tipo de documento', value: customer.customerDocumentType, icon: Icons.badge),
+              const SizedBox(height: 12),
+              _DetailRow(label: 'Número de documento', value: customer.customerDocumentNumber, icon: Icons.numbers),
+              const SizedBox(height: 12),
+              _DetailRow(label: 'Representante legal', value: customer.legalRepresentative, icon: Icons.person_outline),
+              const SizedBox(height: 12),
+              _DetailRow(label: 'Teléfono', value: customer.customerPhone, icon: Icons.phone),
+              if (customer.customerEmail != null && customer.customerEmail!.isNotEmpty) ...[
+                const SizedBox(height: 12),
+                _DetailRow(label: 'Email', value: customer.customerEmail!, icon: Icons.email),
+              ],
+              if (customer.customerAddress != null && customer.customerAddress!.isNotEmpty) ...[
+                const SizedBox(height: 12),
+                _DetailRow(label: 'Dirección', value: customer.customerAddress!, icon: Icons.location_on),
+              ],
+              const SizedBox(height: 12),
+              _DetailRow(
+                label: 'Estado',
+                value: customer.customerStatus ? 'Activo' : 'Inactivo',
+                icon: customer.customerStatus ? Icons.check_circle : Icons.cancel,
+                valueColor: customer.customerStatus ? const Color(0xFF059669) : const Color(0xFFDC2626),
+              ),
+            ],
+          ),
         ),
         actions: [
           TextButton.icon(
@@ -178,8 +198,6 @@ class _CustomerCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final displayContact = customer.customerName;
-
     return Container(
       margin: const EdgeInsets.only(bottom: 12),
       padding: const EdgeInsets.all(16),
@@ -207,7 +225,7 @@ class _CustomerCard extends StatelessWidget {
                     ),
                     const SizedBox(height: 4),
                     Text(
-                      'Doc: ${customer.documentNumber}',
+                      'Doc: ${customer.customerDocumentNumber}',
                       style: TextStyle(fontSize: 13, color: AppColors.textLight),
                       overflow: TextOverflow.ellipsis,
                     ),
@@ -217,22 +235,22 @@ class _CustomerCard extends StatelessWidget {
               Container(
                 padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
                 decoration: BoxDecoration(
-                  color: customer.status
+                  color: customer.customerStatus
                       ? const Color(0xFF059669).withOpacity(0.1)
                       : const Color(0xFFDC2626).withOpacity(0.1),
                   borderRadius: BorderRadius.circular(20),
                   border: Border.all(
-                    color: customer.status
+                    color: customer.customerStatus
                         ? const Color(0xFF059669).withOpacity(0.3)
                         : const Color(0xFFDC2626).withOpacity(0.3),
                   ),
                 ),
                 child: Text(
-                  customer.status ? 'Activo' : 'Inactivo',
+                  customer.customerStatus ? 'Activo' : 'Inactivo',
                   style: TextStyle(
                     fontSize: 11,
                     fontWeight: FontWeight.w600,
-                    color: customer.status
+                    color: customer.customerStatus
                         ? const Color(0xFF059669)
                         : const Color(0xFFDC2626),
                   ),

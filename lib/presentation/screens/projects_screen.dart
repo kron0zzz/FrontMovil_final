@@ -144,23 +144,33 @@ class _ProjectsScreenState extends State<ProjectsScreen> {
             ),
           ],
         ),
-        content: Column(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            _DetailRow(label: 'Ciudad', value: project.projectCity, icon: Icons.location_city),
-            const SizedBox(height: 12),
-            _DetailRow(label: 'Teléfono', value: project.projectPhone, icon: Icons.phone),
-            const SizedBox(height: 12),
-            _DetailRow(label: 'Cliente ID', value: '#${project.customerId}', icon: Icons.person),
-            const SizedBox(height: 12),
-            _DetailRow(
-              label: 'Estado',
-              value: project.projectStatus ? 'Activo' : 'Inactivo',
-              icon: project.projectStatus ? Icons.check_circle : Icons.cancel,
-              valueColor: project.projectStatus ? const Color(0xFF059669) : const Color(0xFFDC2626),
-            ),
-          ],
+        content: SingleChildScrollView(
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              _DetailRow(label: 'ID', value: '#${project.projectId}', icon: Icons.tag),
+              const SizedBox(height: 12),
+              _DetailRow(label: 'Cliente', value: project.customerName, icon: Icons.business),
+              const SizedBox(height: 12),
+              _DetailRow(label: 'Cliente ID', value: '#${project.customerId}', icon: Icons.person),
+              const SizedBox(height: 12),
+              _DetailRow(label: 'Ciudad', value: project.projectCity, icon: Icons.location_city),
+              const SizedBox(height: 12),
+              _DetailRow(label: 'Teléfono', value: project.projectPhone, icon: Icons.phone),
+              if (project.projectAddress != null && project.projectAddress!.isNotEmpty) ...[
+                const SizedBox(height: 12),
+                _DetailRow(label: 'Dirección', value: project.projectAddress!, icon: Icons.location_on),
+              ],
+              const SizedBox(height: 12),
+              _DetailRow(
+                label: 'Estado',
+                value: project.projectStatus ? 'Activo' : 'Inactivo',
+                icon: project.projectStatus ? Icons.check_circle : Icons.cancel,
+                valueColor: project.projectStatus ? const Color(0xFF059669) : const Color(0xFFDC2626),
+              ),
+            ],
+          ),
         ),
         actions: [
           TextButton.icon(

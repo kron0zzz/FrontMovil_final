@@ -159,18 +159,54 @@ class _OrdersScreenState extends State<OrdersScreen> {
             ),
           ],
         ),
-        content: Column(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            _DetailRow(label: 'Proyecto', value: order.projectName, icon: Icons.engineering),
-            const SizedBox(height: 12),
-            _DetailRow(label: 'Cliente', value: order.customerName, icon: Icons.person),
-            const SizedBox(height: 12),
-            _DetailRow(label: 'Estado', value: order.orderStatusName, icon: Icons.info_outline),
-            const SizedBox(height: 12),
-            _DetailRow(label: 'Fecha', value: _formatDate(order.orderCreationDate), icon: Icons.calendar_today),
-          ],
+        content: SingleChildScrollView(
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              _DetailRow(label: 'ID', value: '#${order.orderId}', icon: Icons.tag),
+              const SizedBox(height: 12),
+              _DetailRow(label: 'Proyecto', value: order.projectName, icon: Icons.engineering),
+              const SizedBox(height: 12),
+              _DetailRow(label: 'Ciudad del proyecto', value: order.projectCity, icon: Icons.location_city),
+              if (order.projectAddress != null && order.projectAddress!.isNotEmpty) ...[
+                const SizedBox(height: 12),
+                _DetailRow(label: 'Dirección del proyecto', value: order.projectAddress!, icon: Icons.location_on),
+              ],
+              const SizedBox(height: 12),
+              _DetailRow(label: 'Teléfono del proyecto', value: order.projectPhone, icon: Icons.phone),
+              const SizedBox(height: 12),
+              _DetailRow(label: 'Cliente', value: order.customerName, icon: Icons.person),
+              const SizedBox(height: 12),
+              _DetailRow(label: 'Teléfono del cliente', value: order.customerPhone, icon: Icons.phone),
+              const SizedBox(height: 12),
+              _DetailRow(label: 'Email del usuario', value: order.userEmail, icon: Icons.email),
+              const SizedBox(height: 12),
+              _DetailRow(label: 'Estado', value: order.orderStatusName, icon: Icons.info_outline),
+              const SizedBox(height: 12),
+              _DetailRow(label: 'Fecha de creación', value: _formatDate(order.orderCreationDate), icon: Icons.calendar_today),
+              if (order.orderClosingDate != null && order.orderClosingDate!.isNotEmpty) ...[
+                const SizedBox(height: 12),
+                _DetailRow(label: 'Fecha de cierre', value: _formatDate(order.orderClosingDate), icon: Icons.calendar_month),
+              ],
+              const SizedBox(height: 12),
+              _DetailRow(label: 'Frecuencia de corte', value: order.cutFrequency, icon: Icons.schedule),
+              if (order.lastCutDate != null && order.lastCutDate!.isNotEmpty) ...[
+                const SizedBox(height: 12),
+                _DetailRow(label: 'Último corte', value: _formatDate(order.lastCutDate), icon: Icons.content_cut),
+              ],
+              if (order.orderDescription != null && order.orderDescription!.isNotEmpty) ...[
+                const SizedBox(height: 12),
+                _DetailRow(label: 'Descripción', value: order.orderDescription!, icon: Icons.description),
+              ],
+              const SizedBox(height: 12),
+              _DetailRow(
+                label: 'Descuento',
+                value: '\$${order.discountAmount.toStringAsFixed(0)}',
+                icon: Icons.discount,
+              ),
+            ],
+          ),
         ),
         actions: [
           TextButton.icon(

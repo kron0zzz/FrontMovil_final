@@ -31,4 +31,4 @@ class AppTheme {
 }
 
 /// URL base de la API - Única fuente de verdad
-const String apiBaseUrl = 'http://localhost:3000/api';
+const String apiBaseUrl = 'https://api-makand.onrender.com/api';
